@@ -1,0 +1,19 @@
+fastapi>=0.115,<1
+uvicorn>=0.30,<1
+python-multipart>=0.0.18,<1
+python-dotenv>=1,<2
+httpx>=0.27,<1
+numpy>=1.26,<3
+soundfile>=0.12,<1
+scipy>=1.11,<2
+# Scoring dependencies; use a compatible torch/torchaudio pair.
+torch>=2.2
+torchaudio>=2.2
+laion-clap>=1.1.6
+transformers>=4.30,<6
+
+# Bounded local video processing for the soundtrack studio.
+imageio-ffmpeg>=0.6,<0.7
+
+# CommonMark parsing for local read-aloud; no model request.
+markdown-it-py==4.0.0

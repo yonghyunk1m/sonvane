@@ -1,0 +1,36 @@
+.venv/
+.env
+.env.*
+!.env.example
+.data/
+.models/
+__pycache__/
+.pytest_cache/
+artifacts/
+*.pyc
+app/static/demo/*.mp4
+
+.cache/
+
+# Private production captures and unpublished research are not release assets.
+app/static/demo/storyboard-assets/
+app/static/demo/storyboard-sheet.jpg
+app/static/demo/storyboard.html
+app/static/demo/storyboard.css
+app/static/demo/storyboard.js
+app/static/report/training_data.pdf
+
+# Local collaborator instructions and private film-production drafts.
+AGENTS.md
+docs/film-*.md
+docs/demo-requirements-audit.md
+scripts/build_film_storyboard.py
+scripts/film_storyboard_design.css
+scripts/film_subtitles.json
+scripts/prepare_film_v2.py
+scripts/render_film_v2.py
+scripts/render_storyboard.py
+
+# Deployment-only final film assets are uploaded to the Space, not GitHub.
+deploy/huggingface/media/*
+!deploy/huggingface/media/.gitkeep

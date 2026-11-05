@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Sonvane — Choose the music that fits</title>
+  <meta name="description" content="Compare your music candidates with TuneJury scores and Meta Muse planning. Listen, choose, and download your track.">
+  <link rel="icon" href="/assets/sonvane.svg" type="image/svg+xml">
+  <link rel="preload" href="/assets/inter.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/style.css"><script defer src="/app.js"></script>
+</head>
+<body>
+  <a class="skip" href="#workspace">Skip to workspace</a>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="Sonvane home"><img class="mark" src="/assets/sonvane.svg" alt="" width="38" height="38"><span>sonvane<span class="brand-stop">.</span></span></a>
+    <span class="header-description">Music selection, with you.</span>
+    <div class="top-right"><span class="pill" id="connection">Connecting</span><button class="text-button" id="new-session">New session <span aria-hidden="true">＋</span></button></div>
+  </header>
+  <main id="workspace">
+    <section class="intro"><div><h1>Choose the music that fits.</h1><p class="lede">Bring your tracks. Hear the alternatives. Make the call.</p></div><a class="intro-link" href="#listen-section">Go to listening <span aria-hidden="true">↗</span></a></section>
+    <nav class="steps" aria-label="Workflow steps"><a href="#collection" id="step-1"><b>01</b> Your tracks</a><a href="#listen-section" id="step-2"><b>02</b> Listen & compare</a><a href="#final-selection" id="step-3"><b>03</b> Your pick</a></nav>
+    <div class="workspace-grid">
+      <div class="main-column">
+        <section class="panel candidates-panel" id="collection">
+          <div class="section-title"><div><h2>Your tracks <span id="track-count" class="count">0</span></h2><p class="section-description">A few possibilities. One that works for you.</p></div><button id="demo" class="text-button">Try test clips</button></div>
+          <label class="dropzone" id="dropzone" for="files"><span class="upload-symbol" aria-hidden="true">＋</span><span><strong>Add tracks <span>or drop files here</span></strong><small>WAV, FLAC, OGG, MP3 · Up to 12 tracks · 24 MB each · 1–180 sec</small></span><input id="files" type="file" accept=".wav,.flac,.ogg,.mp3" multiple></label>
+          <div id="test-warning" class="notice hidden">Test session: these clips are synthetic and demonstrate the workflow.</div>
+          <div class="toolbar"><p id="score-summary" class="small-copy">Add at least two tracks to compare.</p><button id="score" class="button" disabled>Score tracks <span aria-hidden="true">→</span></button></div>
+          <div id="tracks" class="tracks"><div class="empty"><span class="empty-icon" aria-hidden="true">♫</span><p>Your next track starts here.</p><small>Add music you made or have permission to use.</small></div></div>
+          <details class="metric-note"><summary>About the scores</summary><p>The published TuneJury A1 model scores the <strong>first 10 seconds at most</strong> of each clip. Scores are not probabilities or predictions of your taste. CLAP similarity is a separate retrieval signal. The shortlist combines scores, similarity, variety, and recorded choices using a heuristic. Playback preserves the original volume.</p></details>
+        </section>
+        <section class="panel listen-panel" id="listen-section">
+          <div class="section-title"><div><span class="eyebrow">The listening room</span><h2>Which one works better?</h2></div><span id="vote-count" class="muted">0 choices recorded</span></div>
+          <p class="small-copy">Listen before looking at the scores. Names are revealed after your choice.</p>
+          <div id="comparison"><div class="empty compact">Score your tracks to prepare a comparison.</div></div>
+          <div id="vote-controls" class="hidden"><label for="reason">What made the difference? <span class="muted">Optional</span></label><input id="reason" maxlength="500" placeholder="B leaves more room for the voiceover."><div class="vote-buttons"><button class="button secondary" data-vote="a">Choose A</button><button class="text-button" data-vote="tie">No preference</button><button class="button secondary" data-vote="b">Choose B</button></div></div>
+          <div id="reveal" class="reveal hidden"></div>
+          <div class="listen-bottom"><span class="field-note">You can still pick any track from your list.</span><button id="next" class="text-button" disabled>Next pair →</button></div>
+          <details class="metric-note"><summary>About this comparison</summary><p>You may recognize tracks heard earlier. This is a listening workflow, not a controlled blind study. A recorded choice does not establish your preferences for unheard music.</p></details>
+        </section>
+        <section class="panel final-panel" id="final-selection" aria-labelledby="selected-name">
+          <div class="selection-topline"><span class="eyebrow">Your pick</span><span id="selected-status" class="selection-status">No track selected</span></div>
+          <div class="selection-content"><div class="selection-copy"><h2 id="selected-name" tabindex="-1">Which track will you take?</h2><p id="selected-note" class="small-copy">Choose “Keep this track” in your list. You can change your pick at any time.</p></div></div>
+          <div id="selected-preview" class="selected-preview hidden"><canvas id="selected-wave" class="selected-wave" aria-hidden="true"></canvas><audio id="selected-audio" controls preload="metadata" aria-label="Play your selected track"></audio></div>
+          <div class="selection-bottom"><div class="selection-actions"><a id="download-audio" class="button disabled" aria-disabled="true">Download audio <span aria-hidden="true">↓</span></a><a id="download-record" class="button secondary disabled" aria-disabled="true">Decision record <span class="filetype">JSON</span></a></div><a id="export" class="text-button disabled" aria-disabled="true">Everything as ZIP ↗</a></div>
+          <p id="selected-test" class="selection-footnote hidden">Synthetic test clip · Not an example of music quality</p>
+        </section>
+        <details class="panel activity-panel"><summary><span>Session activity</span><span class="muted">See what changed and why</span></summary><div id="activity"><p class="muted">Your session notes will appear here.</p></div></details>
+      </div>
+      <aside class="brief-panel">
+        <details class="sidebar-fold" id="sidebar-fold" open><summary><span>Brief & Muse</span><span>Set the direction ＋</span></summary>
+        <section class="panel brief-card"><div class="section-title"><h2>The brief</h2><span class="sidebar-number">01</span></div><p class="section-description">What does the music need to do?</p>
+          <label class="sr-only" for="brief">Your brief</label><textarea id="brief" rows="4" maxlength="2000" placeholder="A quiet piano track for my short film. Something warm, with space for the dialogue."></textarea>
+          <details class="advanced-criteria"><summary>Fine-tune the criteria</summary><label for="query">Sound query <span class="muted">English · optional</span></label><input id="query" maxlength="300" placeholder="warm, quiet piano instrumental"><p class="field-note">Used for text/audio similarity. Muse can write this from your brief.</p><div class="form-row"><div><label for="min-duration">Min · seconds</label><input id="min-duration" type="number" min="0" max="180" value="0"></div><div><label for="max-duration">Max · seconds</label><input id="max-duration" type="number" min="1" max="180" value="180"></div></div><label for="diversity">Shortlist variety <output id="diversity-value">35%</output></label><input id="diversity" type="range" min="0" max="100" value="35"><div class="range-labels"><span>Favor scores</span><span>Explore variety</span></div></details>
+          <button id="save-brief" class="button secondary full">Save brief</button>
+        </section>
+        <section class="panel muse-card"><div class="section-title"><span class="muse-wordmark">Muse <small>by Meta</small></span><span id="meta-dot" class="dot"></span></div><h2>A shortlist to start from.</h2><p class="small-copy">Muse Spark uses your brief, scores, and feedback to plan what to compare next.</p><button id="run-agent" class="button full" disabled>Plan with Muse ↗</button><p class="field-note" id="meta-note">Checking the server connection.</p><p id="planner-outcome" class="planner-outcome hidden" aria-live="polite"></p><details class="settings"><summary>Connection & budget</summary><p>Set <code>MODEL_API_KEY</code> in the server’s <code>.env</code> and restart.</p><p id="budget-note"></p><p>Limits apply to this app, not your entire Meta account.</p></details></section>
+        <div class="model-credit"><span class="eyebrow">Built with existing models</span><p><strong>TuneJury A1</strong> scores the candidates.<br><strong>Meta Muse Spark</strong> plans comparisons.<br><strong>You</strong> make the final choice.</p></div>
+        </details>
+      </aside>
+    </div>
+    <footer><span class="footer-brand">sonvane.</span><span>Independent hackathon prototype · Using published TuneJury A1 and Meta Muse Spark</span></footer>
+  </main><div id="toast" role="status" aria-live="polite" class="toast hidden"></div>
+</body>
+</html>

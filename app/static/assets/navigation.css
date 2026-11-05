@@ -1,0 +1,24 @@
+/* Shared navigation: both destinations remain visible on narrow screens. */
+.site-header .product-nav,.topbar .product-nav{display:flex;align-items:center;gap:4px;margin:0 auto;padding:4px;border:1px solid #d7dfe7;border-radius:10px;background:#edf0f3;font-size:15px;line-height:1.4}
+.site-header .product-nav a,.topbar .product-nav a{padding:10px 23px;border-radius:6px;color:#526071;font-weight:500;white-space:nowrap}
+.product-nav a:hover{background:#e3e9f0}
+.site-header .product-nav a[aria-current=page],.topbar .product-nav a[aria-current=page]{background:white;color:#075ee8;box-shadow:0 1px 4px #17212a12}
+.header-action{font-size:14px;white-space:nowrap;color:#526071;min-width:130px;text-align:right;justify-content:flex-end}
+.name-story{padding:75px 6%;display:grid;grid-template-columns:1fr 1fr;gap:70px;border-top:1px solid #d6d9d6}
+.name-story h2{font-size:clamp(34px,3.5vw,56px);line-height:1.1;font-weight:550;letter-spacing:-.04em}
+.name-story h2 span{color:#075ee8}.name-formula{font-size:36px;letter-spacing:-.03em;margin-bottom:18px}.name-formula i{font-style:normal;color:#8995a1;padding:0 16px}.name-explanation>p:not(.name-formula){font-size:17px;line-height:1.75;max-width:540px;color:#526071}.name-explanation .name-note{margin-top:18px;font-size:14px!important}.name-note a{text-decoration:underline;text-underline-offset:4px}
+@media(max-width:800px){.site-header,.topbar{height:auto;min-height:110px;display:flex;flex-wrap:wrap;gap:10px;padding-top:12px;padding-bottom:10px}.site-header .product-nav,.topbar .product-nav{display:flex;order:3;width:100%;justify-content:center;margin:0}.product-nav a{flex:1;text-align:center}.header-action{margin-left:auto;min-width:0}.name-story{grid-template-columns:1fr;gap:28px;padding:50px 6%}.name-story h2{font-size:38px}.name-explanation>p:not(.name-formula){font-size:16px}.story-visual{top:122px}}
+
+/* One shared header geometry and wordmark for Overview and Studio. */
+.sonvane-header{box-sizing:border-box;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:24px;width:100%;max-width:none;height:82px;min-height:0;margin:0;padding:0 4%;position:sticky;top:0;z-index:10;background:rgba(245,245,241,.94);border-bottom:1px solid #d6d9d6;backdrop-filter:blur(12px);font-family:Inter,Arial,sans-serif;font-size:16px;line-height:1.5;font-synthesis:none;-webkit-font-smoothing:antialiased}
+.sonvane-header .site-brand{display:inline-flex;align-items:center;justify-self:start;gap:10px;font-size:28px;font-weight:750;letter-spacing:-.07em;line-height:1.5;color:#17212a;text-decoration:none;white-space:nowrap}
+.sonvane-header .site-brand img{display:block;width:32px;height:32px;flex:none}
+.sonvane-header .brand-dot{color:#075ee8}
+.sonvane-header .product-nav{margin:0;justify-self:center;width:auto;order:0}
+.sonvane-header .header-action{justify-self:end;margin:0;padding:0;min-width:0;font-family:inherit;font-size:14px;font-weight:400;line-height:1.5;letter-spacing:0;color:#526071;background:none;border:0}
+@media(max-width:800px){.sonvane-header{grid-template-columns:minmax(0,1fr) auto;gap:10px;height:auto;min-height:110px;padding:12px 4% 10px}.sonvane-header .site-brand{font-size:25px}.sonvane-header .site-brand img{width:28px;height:28px}.sonvane-header .product-nav{grid-column:1/-1;grid-row:2;width:100%;justify-content:center}.sonvane-header .header-action{grid-column:2;grid-row:1}}
+
+/* The same compact release link appears in Overview and Studio. */
+footer .release-link{color:#075be8;font-size:13px;white-space:nowrap;text-decoration:none}
+footer .release-link:hover{text-decoration:underline;text-underline-offset:3px}
+.site-footer{flex-wrap:wrap}

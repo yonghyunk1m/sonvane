@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="240" viewBox="0 0 300 240" role="img" aria-labelledby="title">
+  <title id="title">A listener selects one of three music candidates</title>
+  <g fill="#f2f4f5" stroke="#d9dfe4"><rect x="12" y="15" width="276" height="60" rx="12"/><rect x="12" y="90" width="276" height="60" rx="12"/></g>
+  <rect x="12" y="165" width="276" height="60" rx="12" fill="#eef4fc" stroke="#0064e0"/>
+  <g fill="#5b6770" font-family="Arial,sans-serif" font-size="12"><text x="30" y="50">01</text><text x="30" y="125">02</text></g>
+  <text x="30" y="200" fill="#0054bf" font-family="Arial,sans-serif" font-size="12">03</text>
+  <g stroke="#929b96" stroke-width="3" stroke-linecap="round"><path d="M74 39v12m10-22v32m10-26v20m10-15v10m10-22v34m10-26v18m10-11v4m10-12v20m10-26v32m10-22v12m10-16v20m10-27v34m10-24v14m10-11v8m10-14v20"/><path d="M74 108v24m10-18v12m10-25v38m10-29v20m10-17v14m10-25v36m10-22v8m10-16v24m10-30v36m10-25v14m10-20v26m10-22v18m10-15v12m10-22v32m10-23v14"/></g>
+  <path d="M74 185v20m10-14v8m10-23v38m10-29v20m10-15v10m10-21v32m10-25v18m10-13v8m10-18v28m10-20v12m10-25v38m10-26v14m10-10v6m10-17v28m10-19v10" fill="none" stroke="#0064e0" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="258" cy="195" r="13" fill="#0064e0"/><path d="m252 195 4 4 8-8" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sonvane — Scene-directed soundtrack creation</title><meta name="citation_title" content="Sonvane: Scene-directed soundtrack creation"><meta name="citation_author" content="Kim, Yonghyun"><meta name="citation_publication_date" content="2026/11/04"><meta name="citation_pdf_url" content="https://yonghyunk1m-sonvane.hf.space/report/sonvane-technical-report.pdf"><meta name="description" content="Technical report on Sonvane: reviewed sound plans, local music generation, inspectable recommendations and reversible personal feedback."><link rel="icon" href="../assets/sonvane.svg"><link rel="stylesheet" href="report.css"></head>
+<body><nav class="report-nav" aria-label="Report navigation"><a href="../demo/">Sonvane overview</a><a href="#architecture">Method</a><a href="#verification">Verification</a><a href="sonvane-technical-report.pdf" download>Download PDF ↓</a></nav><main>
+<section class="report-page" id="summary">
+<header class="masthead"><span class="wordmark">sonvane<span>.</span></span><span>TECHNICAL REPORT · 4 NOVEMBER 2026</span></header>
+<h1>Scene-directed<br>soundtrack creation.</h1>
+<p class="subtitle">From a creator’s intention to an approved sound plan, generated alternatives and an editable video mix.</p>
+<p class="byline">Yonghyun Kim · Meta Global AI Developer Hackathon</p>
+<h2>Abstract</h2>
+<p>Sonvane connects scene understanding to soundtrack production through a plan the creator can inspect and approve. Meta Muse Spark reads sampled video frames, available source audio and the creator’s request, then proposes timed music and effect cues. The creator edits the plan before execution. ACE-Step generates music alternatives; TuneJury A1 and CLAP provide music-only evaluation signals; Sonvane combines them with an optional personal adjustment to recommend a candidate. The creator chooses what to keep.</p>
+<p>The workflow supports explicit, removable listening preferences, conversational actions, bounded music edits and recovery from interrupted generation. Existing model weights remain fixed. This report describes the implemented method and its limits, with <strong>106 automated tests passing</strong> on 4 November 2026. These checks establish functional behavior, not improvements in creative quality or user productivity.</p>
+<h2>1. What Sonvane contributes</h2>
+<p>A scene needs more than a track: it needs decisions about entry, silence, intensity and revision. Sonvane connects those decisions to executable audio operations while retaining the creator’s approval and final choice.</p>
+<div class="contribution"><strong>Review before execution</strong><p>A versioned cue plan separates a model’s suggestion from permission to generate. Generated tracks retain the approved plan that produced them.</p></div>
+<div class="contribution"><strong>Inspect the recommendation</strong><p>General music preference, music-to-brief similarity and personal feedback remain separate signals. Remembering a comparison changes a bounded ranking adjustment.</p></div>
+<div class="contribution"><strong>Revise without losing work</strong><p>Validated interval edits preserve source PCM outside the selected region. Saved execution stages allow interrupted jobs to resume.</p></div>
+<p class="note">The contribution is this connected workflow and its controls. Muse, ACE-Step, TuneJury, CLAP and pairwise preference learning are existing components; no new foundation model or state-of-the-art result is claimed.</p>
+</section>
+<section class="report-page" id="pipeline">
+<header class="running-head">SONVANE <span>SYSTEM OVERVIEW</span></header>
+<h2>From a reviewed plan to a finished video</h2>
+<figure class="full-pipeline"><img src="pipeline.svg" alt="Four illustrated stages: Muse proposes cues, the creator reviews and approves, ACE-Step generates and TuneJury evaluates, then Sonvane mixes the selected result. Music, effects and personal feedback follow separate routes."><figcaption><strong>Figure 1.</strong> The creator workflow and its execution paths. Approval fixes the cue version before music generation. A1 and CLAP evaluate music only; local effects bypass that evaluation. Explicit comparisons feed a separate personal ranking model.</figcaption></figure>
+<h3>Read the pipeline</h3>
+<p><strong>Muse proposes; the creator approves.</strong> Timing and descriptions are inspectable before audio is generated. <strong>ACE-Step generates; TuneJury evaluates.</strong> Sonvane combines preference, brief matching and personal feedback, while the creator retains the final selection.</p>
+<p class="source">The original illustrations explain roles; they are not captured application screens. The blue planning companion is original artwork, not an official Meta mascot. Existing model weights remain fixed.</p>
+</section>
+<section class="report-page" id="architecture">
+<header class="running-head">SONVANE <span>METHOD / PLANNING AND EXECUTION</span></header>
+<h2>2. From scene to approved sound</h2>
+
+<h3>2.1 Why Muse is the planning layer</h3>
+<p>Muse connects the scene, source sound and user intent to structured cues and supported actions. In the reviewed-plan path, it receives twelve evenly spaced, timestamped frames, source audio when available, the request and matching saved directions. Frame-only planning uses Muse Spark 1.3; audio-bearing planning uses 1.2. This use of multimodal understanding and structured output motivates the integration; it does not establish that only Muse could perform the task.</p>
+<p>A source may be up to ten minutes and 250 MB; the working section is 3–30 seconds. Local validation permits at most three non-overlapping music cues of at least three seconds and five effect cues of 0.1–5 seconds, all within the section. A proposal creates no audio. Sampled frames support approximate planning, not frame-accurate event tracking.</p>
+<h3>2.2 Approval is an execution boundary</h3>
+<p>Each saved draft has a revision identifier. Approval must name the current revision; stale requests are rejected before execution. The approved snapshot is copied into the job and generated tracks, independently of later draft changes. Approval and generation do not require another Muse planning call. A separate quick path uses four frames and full-section musical briefs; it does not provide the reviewed cue workflow.</p>
+<h3>2.3 Generation, placement and effects</h3>
+<p>ACE-Step 1.5 generates three seeded variations per approved music cue. Three cues can therefore require nine generations, assembled into three candidate music beds. Generation includes duration margin and is trimmed to the requested interval. Cue placement, gains and edge fades are applied locally; gaps contain no generated music. Independently generated cues do not guarantee musical continuity.</p>
+<p>Whoosh, chime, impact, click and riser are synthesized locally with deterministic DSP. Their descriptions record intent; they do not drive a learned effect generator. Effects remain separate from music evaluation. An effects-only plan bypasses music generation and scoring.</p>
+
+<p class="source">Code: <code>app/soundplan.py</code>, <code>app/studio.py</code>, <code>scripts/generate_music.py</code>.</p>
+</section>
+<section class="report-page" id="ranking">
+<header class="running-head">SONVANE <span>METHOD / RECOMMENDATION AND MEMORY</span></header>
+<h2>3. What the recommendation means</h2>
+<h3>3.1 Evaluate music, not the whole soundtrack</h3>
+<p>Each enabled music interval is partitioned into balanced windows of at most ten seconds. A1 scores and CLAP audio embeddings are averaged equally across all windows. Gaps and synthesized effects are excluded. Let <em>q</em> be the mean A1 score and <em>c</em> the cosine similarity between the mean audio embedding and the CLAP text embedding of the approved music descriptions, concatenated and bounded to 300 characters.</p>
+<div class="equation">Base utility = 0.65 σ(q) + 0.35 (c + 1) / 2</div>
+<p>Here σ is the logistic sigmoid. A1 is an unbounded audio-preference signal, not a rating out of ten. The sigmoid and mixing weights are application heuristics, not calibrated probabilities. CLAP compares aggregate music with a written brief; this does not measure per-cue adherence, audiovisual fit or effect quality.</p>
+<h3>3.2 Learn only from explicit comparisons</h3>
+<p>For each remembered comparison, normalize the mean audio features to obtain a 512-dimensional vector <em>z</em>, and form Δ<sub>i</sub> = z<sub>preferred</sub> − z<sub>other</sub>. A separate linear model fits the retained comparisons for the current context plus general preferences:</p>
+<div class="equation">w* = arg min<sub>w</sub> [ Σ<sub>i=1…n</sub> log(1 + exp(−wᵀΔ<sub>i</sub>)) + (0.25 / 2) ‖w‖² ]</div>
+<p>The fit starts at zero and uses L-BFGS-B with at most 150 iterations. The base evaluator has no trainable update in this process. The personal correction is added after base scoring:</p>
+<div class="equation">Final utility = Base utility + α(n) tanh(w*ᵀz)<br>α(n) = min(0.30, 0.30 n / 8)</div>
+<p>With no retained comparisons, the correction is zero. The cap limits its influence; the schedule is not a confidence estimate or a demonstrated sample-efficiency result. The small personal model can still overfit sparse feedback.</p>
+<h3>3.3 Two distinct forms of memory</h3>
+<table><thead><tr><th>Saved information</th><th>Effect and removal</th></tr></thead><tbody>
+<tr><td>Text directions</td><td>Matching notes return to Muse as instructions. They do not train the ranker.</td></tr>
+<tr><td>Listening comparisons</td><td>Explicit A/B choices fit the separate personal model. Deleting examples refits it using the remaining data.</td></tr>
+</tbody></table>
+<p>A repeated comparison of the same pair in the same context replaces its earlier entry rather than increasing its weight. Downloading or selecting a track is not automatically a preference label. A refreshed recommendation does not silently replace the already selected soundtrack.</p>
+<p>A fixed base model supports attribution and refitting; superiority to fine-tuning has not been established. Previously exported files remain unchanged.</p>
+<p class="source">Code: <code>app/audio.py</code>, <code>app/personalization.py</code>, <code>app/studio.py</code>.</p>
+</section>
+<section class="report-page" id="control">
+<header class="running-head">SONVANE <span>METHOD / REVISION AND RECOVERY</span></header>
+<h2>4. Actions that change the artifact</h2>
+<p>Muse can propose one of seven supported actions: answer, generate, mix, select, remember, forget or edit a region. Action-specific schemas and local checks determine what can execute. A conversational response is not itself evidence that an operation succeeded; the application records execution outcomes separately. Conversation does not bypass cue-plan review and approval.</p>
+<h3>4.1 Preserve the surrounding music</h3>
+<p>Interval repainting requires a 10–30-second track and an interval of at least one second. For a reviewed-plan track, the interval must lie inside one approved music cue. The generated replacement is resampled and channel-matched to the source. Sonvane replaces only the selected sample range, blending at its boundaries with fades of up to 80 milliseconds.</p>
+<div class="edit-strip" role="img" aria-label="The source music before and after the selected interval is preserved; only the selected interval is replaced."><span>Source PCM<br><b>Preserved</b></span><span>Selected interval<br><b>Repaint + edge fades</b></span><span>Source PCM<br><b>Preserved</b></span></div>
+<p>The preservation guarantee concerns samples outside that range in the source music PCM. It is not a claim that an encoded video file remains byte-identical, nor that individual instruments can be edited as isolated stems.</p>
+<h3>4.2 Stop, resume and retain a playable result</h3>
+<p>Jobs save planning, generated pieces and completed-track state. Resume reuses valid checkpoints rather than requesting a new plan or repeating completed stages. Stop prevents subsequent stages; an already running provider request may still finish and incur cost. Failed revisions retain the previous playable selection. Recorded request identifiers prevent replay of already handled conversational requests; this is not a distributed exactly-once guarantee.</p>
+<h3>4.3 Mix and export</h3>
+<p>The creator selects the candidate and adjusts music level, original-audio retention and automatic ducking. Applying mix settings reuses the track without another music generation or Muse request. Available exports include the mixed video, raw music, the combined music/effects bed and a decision record, as applicable.</p>
+<h3>4.4 Optional interaction surfaces</h3>
+<p>Voice input is transcribed for review before an action is submitted; optional read-aloud runs locally. This is turn-based interaction. The Overview’s moving curve is a separate audiovisual artwork: cursor position shapes tone, rotation shifts stereo position, and opt-in camera proximity can affect volume. Its procedural audio is not a generated Studio soundtrack or evidence of model output quality.</p>
+<h3>4.5 Runtime boundary</h3>
+<p>The application core keeps its loopback host and origin restrictions. A separate authenticated relay connects an access-restricted Hugging Face preview to an isolated GPU service. Signed browser cookies and server-side ownership records protect each visitor’s projects; bounded uploads, project quotas and request limits constrain use. Browser profile identifiers alone are not authentication. Personal workspace data is not copied into the demo. Availability depends on the connected server remaining online; automatic media expiry is not yet implemented.</p>
+<p class="source">Code: <code>app/conversation.py</code>, <code>app/studio.py</code>, <code>app/video.py</code>, <code>app/main.py</code>.</p>
+</section>
+<section class="report-page" id="verification">
+<header class="running-head">SONVANE <span>VERIFICATION / REFERENCES</span></header>
+<h2>5. Evidence and reproducibility</h2>
+<p><strong>106 tests passed on 4 November 2026</strong> in the local Python 3.13 application environment. The suite uses fixtures and mocked providers; it makes no live model-quality measurement. Two dependency deprecation warnings were reported. Recorded live integration checks are documented separately in <code>docs/studio-verification.md</code> and are not part of this new test count.</p>
+<table><thead><tr><th>Checks</th><th>Behavior covered</th></tr></thead><tbody>
+<tr><td>Plans and approval</td><td>Cue bounds, stale revisions, scoring windows, effect-only paths and approved state.</td></tr>
+<tr><td>Production and recovery</td><td>Generation duration/trimming, checkpoints, cached scores and failed revisions.</td></tr>
+<tr><td>Actions and memory</td><td>Action validation, explicit memory permission, repeated requests and deletion-driven ranking.</td></tr>
+<tr><td>Media and mixing</td><td>Video/audio trim alignment, interval preservation, invalid uploads and ducking duration.</td></tr>
+</tbody></table>
+<p>The repository includes installation scripts and upstream provenance in <code>docs/THIRD_PARTY.md</code>. Music generation uses a separate Python 3.12 environment. Downloaded weights, credentials and private media are not bundled. See the repository README for setup; run the following after installing development dependencies:</p>
+<pre><code>.venv/bin/python -m pytest -q
+.venv/bin/python scripts/build_technical_report.py</code></pre>
+<p>Live checks require their documented fixtures, downloaded models and explicit opt-in to provider calls. Seeds and model revisions support tracing a run; exact GPU reproducibility across hardware and dependency versions has not been established.</p>
+<h3>What remains unmeasured</h3>
+<p>No controlled human study establishes improved music preference, audiovisual fit, time savings or held-out personalization accuracy. This implementation handles short sections, not complete films; sampled planning can miss events, separate cue generations can lack continuity, and scores do not establish rights clearance. The current evidence supports a functioning, inspectable workflow rather than a comparative quality claim.</p>
+<h2 class="refs-title">References</h2>
+<ol class="references">
+<li>Meta. <a href="https://dev.meta.ai/docs/video-understanding">Video and audio understanding</a> and <a href="https://dev.meta.ai/docs/structured-output">structured output</a>. Model API documentation.</li>
+<li>ACE-Step contributors. <a href="https://github.com/ace-step/ACE-Step-1.5">ACE-Step 1.5: source and inference documentation</a>.</li>
+<li>Y. Kim et al. <a href="https://arxiv.org/abs/2606.17006">TuneJury: An Open Metric for Improving Music Generation Preference Alignment</a>. 2026. <a href="https://huggingface.co/TuneJury/tunejury">Released checkpoints</a>.</li>
+<li>Y. Wu et al. <a href="https://arxiv.org/abs/2211.06687">Large-scale Contrastive Language-Audio Pretraining with Feature Fusion and Keyword-to-Caption Augmentation</a>. 2022.</li>
+<li>R. A. Bradley and M. E. Terry. <a href="https://doi.org/10.1093/biomet/39.3-4.324">Rank Analysis of Incomplete Block Designs: I. The Method of Paired Comparisons</a>. Biometrika, 1952.</li>
+</ol>
+<p class="source">Independent project by Yonghyun Kim for the Meta Global AI Developer Hackathon. Upstream models and research retain their respective authorship and licenses.</p>
+</section></main></body></html>

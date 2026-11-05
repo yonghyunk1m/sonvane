@@ -1,0 +1,186 @@
+# Changelog
+
+Release notes for Sonvane. Versions describe shipped application changes, not new versions of the underlying models.
+
+Generated from [release records](../.github/releases.json). The newest release appears first.
+
+## 0.1.0-preview.6 — 2026-11-04
+
+**Share the sound and its story**
+
+Portable video cards now include the chosen music’s score and generation prompt.
+
+### Added
+
+- TuneJury A1 score, saved generation prompt and requested tempo on exported video cards.
+- The card’s Sonvane logo opens the hosted Overview; GitHub links are clearly labeled in Overview and Studio.
+
+### Improved
+
+- Removed the duplicate MP4 download from the sharing dialog; Save video remains the main download action.
+- Sharing captures metadata from the same selection as the video, even if project state updates while the dialog is open.
+
+### Verified
+
+- Offline card playback and compact layouts checked at 390 and 1440 pixels.
+- Zero and unavailable scores, escaped prompt text, selected-track metadata and absence of internal project identifiers checked.
+
+### Scope
+
+- Previously downloaded HTML cards must be exported again to include the new information.
+- GitHub visibility is unchanged by this update; Hugging Face remains Protected.
+
+## 0.1.0-preview.5 — 2026-11-04
+
+**The final Sonvane demo**
+
+Watch the final film on Hugging Face or directly in the GitHub README.
+
+### Added
+
+- The approved 2:54, 1080p final video with English narration and captions.
+- Native GitHub video attachment embedded in the README, with a Hugging Face playback link.
+- Packaged film assets on the Hugging Face Space, independent of GPU-server availability.
+
+### Improved
+
+- Updated the video poster and cache-versioned player to serve the final cut.
+- Consolidated release notes and third-party credits under docs, preserving their README links.
+
+### Verified
+
+- 108 automated tests passed, including video byte-range and HEAD responses without backend credentials.
+- Anonymous Hugging Face playback, audio, chapter seeking and layouts passed at 390 and 1440 pixels; the downloaded video matched the supplied file hash.
+- GitHub-rendered native video played the 1080p final film with decoded audio.
+
+### Scope
+
+- Hugging Face visibility is Protected: the app is accessible through its direct URL while Space source stays private. GitHub remains private.
+- Studio planning and generation still depend on the connected GPU server.
+
+## 0.1.0-preview.4 — 2026-11-04
+
+**Keep your place, share your mix**
+
+Smoother Studio updates and portable video sharing.
+
+### Fixed
+
+- Matched the initial Studio copy to its loaded state, removing the text flash.
+- Removed forced scrolling after analysis; background updates preserve the page position and conversations follow new replies only when already at the bottom.
+- Playback no longer recenters a preview already on screen.
+- Replaced responsive README picture sources with ordinary repository image references for mobile compatibility.
+
+### Improved
+
+- Renamed automatic ducking to Lower music under original audio, with the control unavailable when original audio is off or absent.
+- Enlarged the README banner wordmark, headline and supporting text while preserving the original artwork.
+
+### Added
+
+- Share the selected MP4 through supported device share sheets, or download it.
+- Export a self-contained HTML video card with its video and sound embedded; no internal project URL or conversation is included.
+
+### Verified
+
+- Browser checks passed at 390, 768 and 1440 pixels, including page and conversation scroll preservation.
+- The exported HTML card played offline, and native sharing received only the video file from an explicit user click.
+
+### Scope
+
+- Repository and Hugging Face Space remain private. App share destinations depend on browser and device support.
+
+## 0.1.0-preview.3 — 2026-11-04
+
+**A narrated workflow demo**
+
+A complete English demo film built from real application recordings and generated music.
+
+### Added
+
+- A 2:54 demo review cut with English male narration, single-line captions and chapter navigation.
+- Actual plan review, music comparison, optional saved feedback, interval editing and video export, followed by a second portrait-video example.
+- GitHub and Hugging Face QR destinations in the closing frame; video and subtitle downloads in the player.
+
+### Improved
+
+- Connected the Overview footer and README badge to the demo-film player.
+- Documented that Muse requests use the configured Meta account; exhausted credits do not trigger a silent provider switch.
+
+### Scope
+
+- The film is a review cut. Repository and hosted-preview visibility remain private until separately authorized.
+- Film media is served by the preview deployment and is not bundled in Git. Reproducing the local application does not require the film.
+
+### Verified
+
+- Recorded actions used real Muse and local generation; waiting is compressed for the film.
+- Source music PCM outside the edited interval was unchanged for all three revised candidates.
+- English narration was checked with local speech recognition; comparison passages contain no narration.
+
+## 0.1.0-preview.2 — 2026-11-04
+
+**A cleaner public-facing repository**
+
+A simpler project entry point, with original artwork and fewer repeated interface elements.
+
+### Improved
+
+- Replaced the README text-link row with compact, clickable navigation badges.
+- Added yonghyunk1m.com as a separate author website link.
+- Removed redundant output boxes and connector arrows beneath the illustrated pipeline in Overview and Studio.
+- Matched the shared navigation and README wordmark to the technical report’s typography.
+- Updated the artwork credit to Yonghyun Kim (2026), with a new-tab artist link and responsive spacing above the divider.
+
+### Maintenance
+
+- Archived superseded film concepts and internal production notes outside the tracked source tree; kept the linked identity proposal.
+- Moved machine-readable release records into .github; local collaborator instructions are no longer tracked.
+
+### Verified
+
+- Scanned reachable Git history for known credentials, the private deployment endpoint, private-key patterns and private data paths before publication.
+
+### Added
+
+- MIT license for original source code and documentation; separate asset and upstream terms remain in place.
+
+### Scope
+
+- Repository visibility remains private. Applying a license does not publish the repository.
+
+## 0.1.0-preview.1 — 2026-11-04
+
+**First versioned preview**
+
+The first recorded Sonvane baseline: review a sound plan, compare generated music, and keep the mix you choose.
+
+### Added
+
+- Editable, timed music and effect plans from Muse, with approval before generation.
+- ACE-Step music variations, TuneJury and CLAP ranking signals, and optional remembered listening comparisons.
+- Passage revisions, mix controls, and video, audio and decision-record exports.
+- An interactive Overview artwork with cursor-controlled tone, rotation-controlled stereo position, and optional camera-controlled volume.
+- A Hugging Face preview connected to an isolated GPU service, with visitor-specific project access.
+- One release record shared by the GitHub changelog and the Overview and Studio update links.
+
+### Improved
+
+- Compact Studio comparison cards, recommendation details and mix controls beneath the video.
+- A product-focused README and technical report using the original Sonvane character illustrations.
+
+### Fixed
+
+- The hosted root now redirects to /demo/, so relative stylesheets and scripts load at the correct address.
+
+### Scope
+
+- This preview is the first versioned baseline; earlier development work is not assigned retrospective release numbers.
+- The hosted preview depends on the connected GPU server being online. Repository and Space visibility are managed separately from the version number.
+- Model scores are recommendation signals; no controlled study has established creative-quality or time-saving improvements.
+
+### Verified
+
+- 106 automated tests passed on 4 November 2026, including hosted access boundaries and asset-path regressions.
+- Hosted browser checks passed for Overview styling, sound controls, Studio navigation and update-page layouts at 390, 768 and 1440 pixels.
+- A synthetic six-second clip completed a real Muse plan, approved generation of three candidates and video export through the hosted preview.
